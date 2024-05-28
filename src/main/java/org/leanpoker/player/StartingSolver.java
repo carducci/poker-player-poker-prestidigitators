@@ -59,7 +59,7 @@ public class StartingSolver {
     }
     if (score > 10) {
       return GutFeeling.STRONG;
-    } else if (score < 6) {
+    } else if (score > 6) {
       return GutFeeling.MEDIUM;
     }
     return GutFeeling.WEAK;
