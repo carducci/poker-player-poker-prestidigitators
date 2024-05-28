@@ -128,10 +128,13 @@ public class Player {
   }
 
   private static int lessConfidentButBluffing(BetRequest betRequest) {
-    if (bluffs.containsKey(betRequest.gameId())) {
+    if (bluffs.containsKey(betRequest.gameId()) && shouldWeCall(5)) {
+      if(doWeHaveToCallAnAllIn(betRequest))
+        return 0;
+
       return betRequest.pot() / 2;
     }
-    if (shouldWeBluff()) {
+    if (shouldWeBluff() && !doWeHaveToCallAnAllIn(betRequest)) {
       bluffs.put(betRequest.gameId(), true);
       log.info(">>> we bluff, game id: {}", betRequest.gameId());
       return confidentRaise(betRequest);
