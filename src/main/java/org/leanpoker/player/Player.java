@@ -77,6 +77,7 @@ public class Player {
     int i = random.nextInt(10);
     if (i <= 3) {
       bluffs.put(betRequest.gameId(), true);
+      log.info(">>> we bluff, game id: {}", betRequest.gameId());
       return (betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
               + betRequest.minimumRaise()) * 5;
     } else if (i < 9) {
