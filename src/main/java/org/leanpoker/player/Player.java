@@ -12,7 +12,7 @@ public class Player {
     static final String VERSION = "1.1";
 
     public static int betRequest(JsonNode request) {
-        log.info(request);
+        log.info(request.asText());
         return 500;
     }
 
