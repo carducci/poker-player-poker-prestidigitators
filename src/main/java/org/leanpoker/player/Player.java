@@ -17,7 +17,7 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "3.2";
+  static final String VERSION = "3.3";
 
   private static Map<String, Boolean> bluffs = new HashMap<>();
   public static Random random = new Random();
@@ -28,6 +28,12 @@ public class Player {
       BetRequest betRequest = OBJECT_MAPPER.treeToValue(jsonNode, BetRequest.class);
 
       if (betRequest.isPostFlop()) {
+        if (betRequest.currentBuyIn() > betRequest.bigBlind() &&
+            minRaise(betRequest) > betRequest.bigBlind()) {
+          if (random.nextInt(2) == 0) {
+            return betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet();
+          }
+        }
         if (HandEvaluator.hasTwoPairOrBetter(betRequest)) {
           return betRequest.pot();
         }
@@ -35,7 +41,6 @@ public class Player {
           return betRequest.pot();
         }
         return betRequest.pot() / 4;
-
       }
 
       var card1 = betRequest.getHoleCards().get(0);
