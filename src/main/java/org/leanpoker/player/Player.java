@@ -48,10 +48,13 @@ public class Player {
         if (HandEvaluator.hasTwoPairOrBetter(betRequest)) {
           return betRequest.pot();
         }
-        if (random.nextInt(4) == 0) {
-          return betRequest.pot();
-        }
+
         if(doWeHaveToCallAnAllIn(betRequest)){
+          return 0;
+        }
+        if(shouldWeCall(6))
+          return betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet();
+        if(shouldWeCall(4)){
           return 0;
         }
         return betRequest.pot() / 4;
