@@ -15,12 +15,16 @@ class HandEvaluator {
         .map(Card::rank)
         .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
+    var tripleCount = 0;
     var pairCount = 0;
     for(var entry : rankCount.entrySet()) {
       if(entry.getValue() == 2) {
         pairCount++;
       }
+      if(entry.getValue() == 3) {
+        tripleCount++;
+      }
     }
-    return pairCount >= 2;
+    return pairCount >= 2 || tripleCount >= 1;
   }
 }

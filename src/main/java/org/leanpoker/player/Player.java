@@ -17,29 +17,23 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "3.0";
+  static final String VERSION = "3.1";
 
   private static Map<String, Boolean> bluffs = new HashMap<>();
   public static Random random = new Random();
 
   public static int betRequest(JsonNode request) {
     try {
-      // log.info(request.toString());
       JsonNode jsonNode = OBJECT_MAPPER.readTree(request.toString());
       BetRequest betRequest = OBJECT_MAPPER.treeToValue(jsonNode, BetRequest.class);
 
       if (betRequest.isPostFlop()) {
-        // if we have 2 pair or better, bet the pot
-        // otherwise, bet the pot one quarter of the time
-        // otherwise, check
         if (HandEvaluator.hasTwoPairOrBetter(betRequest)) {
           return betRequest.pot();
         }
-        // 25% of the time, bet the pot
         if (random.nextInt(4) == 0) {
           return betRequest.pot();
         }
-        // 1 quarter of the pot
         return betRequest.pot() / 4;
 
       }
