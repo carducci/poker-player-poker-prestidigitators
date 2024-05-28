@@ -40,7 +40,7 @@ public class StartingSolver {
 
     if (cards.card1.rank().equals(cards.card2.rank())) {
       score *= 2;
-      if (score < 5) {
+      if (score < 6) {
         return 0;
       }
     }
