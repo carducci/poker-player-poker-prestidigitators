@@ -14,91 +14,63 @@ class APlayer {
   void all_in_right_now() throws JsonProcessingException {
     // create a empty JsonNode
     // call Player.betRequest() and assert that it returns 0
-    ObjectMapper objectMapper = Player.OBJECT_MAPPER;
-    JsonNode jsonNode = objectMapper.readTree(example);
-    BetRequest betRequest = objectMapper.treeToValue(jsonNode, BetRequest.class);
     assertEquals(1000, Player.betRequest(JsonNodeFactory.instance.objectNode()));
   }
 
 
   String example = """
       {
-        "tournament_id":"550d1d68cd7bd10003000003",
-            
-        "game_id":"550da1cb2d909006e90004b1",
-            
-        "round":0,
-            
-        "bet_index":0,
-            
-        "small_blind": 10,
-            
-        "current_buy_in": 320,
-            
-        "pot": 400,
-            
-        "minimum_raise": 240,
-            
-        "dealer": 1,
-            
-        "orbits": 7,
-            
-        "in_action": 1,
-            
+        "tournament_id": "66559491eb1286000231be58",
+        "game_id": "6655a77208adbe0002a9d374",
+        "round": 4,
         "players": [
           {
-            "id": 0,
-            
-            "name": "Albert",
-            
+            "name": "Rusty Ladies",
+            "stack": 984,
             "status": "active",
-            
-            "version": "Default random player",
-            
-            "stack": 1010,
-            
-            "bet": 320
+            "bet": 4,
+            "time_used": 1139935,
+            "version": "0.1",
+            "id": 0
           },
           {
-            "id": 1,
-            "name": "Bob",
+            "name": "Peanuts",
+            "stack": 0,
+            "status": "out",
+            "bet": 0,
+            "time_used": 286224,
+            "version": "0.0.6 - logging",
+            "id": 1
+          },
+          {
+            "name": "Poker Prestidigitators",
+            "stack": 2010,
             "status": "active",
-            "version": "Default random player",
-            "stack": 1590,
-            "bet": 80,
+            "bet": 2,
             "hole_cards": [
               {
-                "rank": "6",
-                "suit": "hearts"
+                "rank": "2",
+                "suit": "diamonds"
               },
               {
-                "rank": "K",
-                "suit": "spades"
+                "rank": "5",
+                "suit": "hearts"
               }
-            ]
-          },
-          {
-            "id": 2,
-            "name": "Chuck",
-            "status": "out",
-            "version": "Default random player",
-            "stack": 0,
-            "bet": 0
+            ],
+            "time_used": 569937,
+            "version": "1.3",
+            "id": 2
           }
         ],
-        "community_cards": [
-          {
-            "rank": "4",
-            "suit": "spades"
-          },
-          {
-            "rank": "A",
-            "suit": "hearts"
-          },
-          {
-            "rank": "6",
-            "suit": "clubs"
-          }
-        ]
+        "small_blind": 2,
+        "big_blind": 4,
+        "orbits": 1,
+        "dealer": 0,
+        "community_cards": [],
+        "current_buy_in": 4,
+        "pot": 6,
+        "in_action": 2,
+        "minimum_raise": 2,
+        "bet_index": 3
       }""";
 }
