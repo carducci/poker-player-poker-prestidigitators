@@ -1,4 +1,5 @@
 package org.leanpoker.player;
+
 /* Chen Formula:
 Score your highest card only. Do not add any points for your lower card.
 A = 10 points.
@@ -19,56 +20,56 @@ Add 1 point if there is a 0 or 1 card gap and both cards are lower than a Q. (e.
 Round half point scores up. (e.g. 7.5 rounds up to 8)
  */
 public class StartingSolver {
-    private StartingHand cards;
-    private int position;
 
-    public int calculateChenScore() {
-        int score = 0;
-        if (cards.card1.rank().equals("A")) {
-            score += 10;
-        } else if (cards.card1.rank().equals("K")) {
-            score += 8;
-        } else if (cards.card1.rank().equals("Q")) {
-            score += 7;
-        } else if (cards.card1.rank().equals("J")) {
-            score += 6;
-        } else {
-            score += Integer.parseInt(cards.card1.rank()) / 2;
-        }
+  private StartingHand cards;
+  private int position;
 
-        if (cards.card1.rank().equals(cards.card2.rank())) {
-            score *= 2;
-            if (score < 5) {
-                return 0;
-            }
-        }
-        return score;
-    }
-    public StartingSolver(StartingHand cards, int position) {
-        this.cards = cards;
-        this.position = position;
+  public int calculateChenScore() {
+    int score = 0;
+    if (cards.card1.rank().equals("A")) {
+      score += 10;
+    } else if (cards.card1.rank().equals("K")) {
+      score += 8;
+    } else if (cards.card1.rank().equals("Q")) {
+      score += 7;
+    } else if (cards.card1.rank().equals("J")) {
+      score += 6;
+    } else {
+      score += Integer.parseInt(cards.card1.rank()) / 2;
     }
 
-    public int GetAction(){
-        var score = calculateChenScore();
-        if(score > 6)
-        {
-            return 300;
-        }
+    if (cards.card1.rank().equals(cards.card2.rank())) {
+      score *= 2;
+      if (score < 5) {
         return 0;
+      }
     }
+    return score;
+  }
 
-    public boolean IsPair(){
-        if(this.cards.card1.rank() == this.cards.card2.rank())
-        {
-            return true;
-        }
-        return false;
-    }
+  public StartingSolver(StartingHand cards, int position) {
+    this.cards = cards;
+    this.position = position;
+  }
 
-    public boolean IsSuited(){
-        return this.cards.card1.suit().equals(this.cards.card2.suit());
+  public GutFeeling GetAction() {
+    var score = calculateChenScore();
+    if (score > 6) {
+      return GutFeeling.STRONG;
     }
+    return GutFeeling.WEAK;
+  }
+
+  public boolean IsPair() {
+    if (this.cards.card1.rank() == this.cards.card2.rank()) {
+      return true;
+    }
+    return false;
+  }
+
+  public boolean IsSuited() {
+    return this.cards.card1.suit().equals(this.cards.card2.suit());
+  }
 
 
 }
