@@ -17,7 +17,7 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "2.5";
+  static final String VERSION = "3.0";
 
   private static Map<String, Boolean> bluffs = new HashMap<>();
   public static Random random = new Random();
@@ -28,8 +28,24 @@ public class Player {
       JsonNode jsonNode = OBJECT_MAPPER.readTree(request.toString());
       BetRequest betRequest = OBJECT_MAPPER.treeToValue(jsonNode, BetRequest.class);
 
-      var card1 = BetRequest.getHoleCards(betRequest).get(0);
-      var card2 = BetRequest.getHoleCards(betRequest).get(1);
+      if (betRequest.isPostFlop()) {
+        // if we have 2 pair or better, bet the pot
+        // otherwise, bet the pot one quarter of the time
+        // otherwise, check
+        if (HandEvaluator.hasTwoPairOrBetter(betRequest)) {
+          return betRequest.pot();
+        }
+        // 25% of the time, bet the pot
+        if (random.nextInt(4) == 0) {
+          return betRequest.pot();
+        }
+        // 1 quarter of the pot
+        return betRequest.pot() / 4;
+
+      }
+
+      var card1 = betRequest.getHoleCards().get(0);
+      var card2 = betRequest.getHoleCards().get(1);
       var startingHand = new StartingHand(card1, card2);
 
       StartingSolver solver = new StartingSolver(startingHand, 1);
@@ -52,14 +68,15 @@ public class Player {
 
   private static int superConfidentRaise(BetRequest betRequest) {
     int i = random.nextInt(10);
-    if(i < 7)
-      return betRequest.pot()*2;
+    if (i < 7) {
+      return betRequest.pot() * 2;
+    }
     //return all in
     return allIn(betRequest);
   }
 
   private static int allIn(BetRequest betRequest) {
-      return betRequest.players().get(betRequest.inAction()).stack();
+    return betRequest.players().get(betRequest.inAction()).stack();
   }
 
   private static int confidentRaise(BetRequest betRequest) {

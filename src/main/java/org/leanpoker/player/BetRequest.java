@@ -10,10 +10,15 @@ record BetRequest(List<PokerPlayer> players,
                   @JsonProperty("pot") int pot,
                   @JsonProperty("minimum_raise") int minimumRaise,
                   @JsonProperty("in_action") int inAction,
+                  @JsonProperty("community_cards") List<Card> communityCards,
                   @JsonProperty("game_id") String gameId) {
 
 
-  static List<Card> getHoleCards(BetRequest betRequest) {
-    return betRequest.players().get(betRequest.inAction()).holeCards();
+  public List<Card> getHoleCards() {
+    return players().get(inAction()).holeCards();
+  }
+
+  public boolean isPostFlop() {
+    return communityCards().size() > 0;
   }
 }
