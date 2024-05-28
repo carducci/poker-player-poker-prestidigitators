@@ -9,11 +9,11 @@ public class Player {
 
     private static final Logger log = getLogger(Player.class);
 
-    static final String VERSION = "1.1";
+    static final String VERSION = "1.2";
 
     public static int betRequest(JsonNode request) {
         log.info(request.asText());
-        return 500;
+        return 1000;
     }
 
     public static void showdown(JsonNode game) {
