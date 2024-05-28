@@ -17,14 +17,14 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "3.5";
+  static final String VERSION = "3.6";
 
   private static Map<String, Boolean> bluffs = new HashMap<>();
   public static Random random = new Random();
 
   public static boolean shouldWeBluff(){
     int i = random.nextInt(5);
-    return i < 2;
+    return i < 1;
   }
 
   private static boolean shouldWeCall(int probability) {
@@ -105,7 +105,7 @@ public class Player {
 
   private static int mediumConfidentButBluffing(BetRequest betRequest) {
     if (bluffs.containsKey(betRequest.gameId())) {
-      if (doWeHaveToCallAnAllIn(betRequest) && !shouldWeCall(2)) {
+      if (doWeHaveToCallAnAllIn(betRequest) && !shouldWeCall(3)) {
         return 0;
       }
       else if(doWeHaveToCallAnAllIn(betRequest)) {
@@ -128,7 +128,7 @@ public class Player {
   }
 
   private static int lessConfidentButBluffing(BetRequest betRequest) {
-    if (bluffs.containsKey(betRequest.gameId()) && shouldWeCall(5)) {
+    if (bluffs.containsKey(betRequest.gameId()) && shouldWeCall(2)) {
       if(doWeHaveToCallAnAllIn(betRequest))
         return 0;
 
