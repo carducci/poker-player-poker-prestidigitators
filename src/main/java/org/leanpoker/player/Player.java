@@ -5,6 +5,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import org.slf4j.Logger;
 
 public class Player {
@@ -14,7 +15,7 @@ public class Player {
 
     private static final Logger log = getLogger(Player.class);
 
-    static final String VERSION = "1.6";
+    static final String VERSION = "1.7";
 
     public static int betRequest(JsonNode request) {
         try {
