@@ -24,7 +24,7 @@ public class Player {
 
   public static boolean shouldWeBluff(){
     int i = random.nextInt(5);
-    return i <= 2;
+    return i < 2;
   }
 
   private static boolean shouldWeCall(int probability) {
