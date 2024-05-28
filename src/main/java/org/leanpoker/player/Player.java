@@ -14,14 +14,15 @@ public class Player {
 
     private static final Logger log = getLogger(Player.class);
 
-    static final String VERSION = "1.5";
+    static final String VERSION = "1.6";
 
     public static int betRequest(JsonNode request) {
         try {
-            log.info(request.toString());
-
+            // log.info(request.toString());
             JsonNode jsonNode = OBJECT_MAPPER.readTree(request.toString());
             BetRequest betRequest = OBJECT_MAPPER.treeToValue(jsonNode, BetRequest.class);
+
+            log.info("betRequest: {}", betRequest);
             return 1000;
         } catch (Exception e) {
             log.error("Error", e);

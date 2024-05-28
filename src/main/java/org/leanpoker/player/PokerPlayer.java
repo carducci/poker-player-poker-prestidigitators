@@ -1,5 +1,7 @@
 package org.leanpoker.player;
 
-record PokerPlayer(int bet, int stack) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+record PokerPlayer(int bet, int stack, @JsonProperty("hole_cards") Card[] holeCards) {
 
 }

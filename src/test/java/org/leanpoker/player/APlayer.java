@@ -12,9 +12,9 @@ class APlayer {
 
   @Test
   void all_in_right_now() throws JsonProcessingException {
-    // create a empty JsonNode
-    // call Player.betRequest() and assert that it returns 0
-    assertEquals(1000, Player.betRequest(JsonNodeFactory.instance.objectNode()));
+    JsonNode jsonNode = Player.OBJECT_MAPPER.readTree(example);
+
+    assertEquals(1000, Player.betRequest(jsonNode));
   }
 
 
