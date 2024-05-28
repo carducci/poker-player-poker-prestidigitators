@@ -17,13 +17,14 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "3.3";
+  static final String VERSION = "3.4";
 
   private static Map<String, Boolean> bluffs = new HashMap<>();
   public static Random random = new Random();
 
   public static int betRequest(JsonNode request) {
     try {
+      log.info("betRequest: {}", request);
       JsonNode jsonNode = OBJECT_MAPPER.readTree(request.toString());
       BetRequest betRequest = OBJECT_MAPPER.treeToValue(jsonNode, BetRequest.class);
 
