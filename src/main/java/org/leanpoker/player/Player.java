@@ -15,7 +15,7 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "2.0";
+  static final String VERSION = "2.1";
 
   public static int betRequest(JsonNode request) {
     try {
@@ -53,8 +53,18 @@ public class Player {
   }
 
   private static int confidentRaise(BetRequest betRequest) {
-    return (betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
-            + betRequest.minimumRaise()) * 3;
+    Random random = new Random();
+    int i = random.nextInt(10);
+    if (i <= 3) {
+      return (betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
+              + betRequest.minimumRaise()) * 5;
+    } else if (i < 9) {
+      return (betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
+              + betRequest.minimumRaise()) * 4;
+    } else {
+      // go all in
+      return betRequest.players().get(betRequest.inAction()).stack();
+    }
   }
 
   public static void showdown(JsonNode game) {
