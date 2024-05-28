@@ -5,6 +5,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Random;
 import org.slf4j.Logger;
 
 public class Player {
@@ -14,7 +15,7 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "1.9";
+  static final String VERSION = "2.0";
 
   public static int betRequest(JsonNode request) {
     try {
@@ -32,8 +33,14 @@ public class Player {
       var gutFeeling = solver.GetAction();
 
       if (gutFeeling == GutFeeling.STRONG) {
-        return (betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
-                + betRequest.minimumRaise()) * 3;
+        return confidentRaise(betRequest);
+      } else if (gutFeeling == GutFeeling.WEAK) {
+        Random random = new Random();
+        int i = random.nextInt(10);
+        if (i <= 3) {
+          return confidentRaise(betRequest);
+        }
+        return 0;
       }
 
       return 0;
@@ -43,6 +50,11 @@ public class Player {
       log.error("Error", e);
       return 0;
     }
+  }
+
+  private static int confidentRaise(BetRequest betRequest) {
+    return (betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
+            + betRequest.minimumRaise()) * 3;
   }
 
   public static void showdown(JsonNode game) {
