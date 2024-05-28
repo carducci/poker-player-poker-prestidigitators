@@ -15,7 +15,7 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "2.1";
+  static final String VERSION = "2.2";
 
   public static int betRequest(JsonNode request) {
     try {
@@ -23,8 +23,8 @@ public class Player {
       JsonNode jsonNode = OBJECT_MAPPER.readTree(request.toString());
       BetRequest betRequest = OBJECT_MAPPER.treeToValue(jsonNode, BetRequest.class);
 
-      var card1 = betRequest.players().get(betRequest.inAction()).holeCards().get(0);
-      var card2 = betRequest.players().get(betRequest.inAction()).holeCards().get(1);
+      var card1 = BetRequest.getHoleCards(betRequest).get(0);
+      var card2 = BetRequest.getHoleCards(betRequest).get(1);
       var startingHand = new StartingHand(card1, card2);
 
       StartingSolver solver = new StartingSolver(startingHand, 1);
@@ -32,24 +32,37 @@ public class Player {
       log.info("betRequest: {}", betRequest);
       var gutFeeling = solver.GetAction();
 
-      if (gutFeeling == GutFeeling.STRONG) {
-        return confidentRaise(betRequest);
-      } else if (gutFeeling == GutFeeling.WEAK) {
-        Random random = new Random();
-        int i = random.nextInt(10);
-        if (i <= 3) {
-          return confidentRaise(betRequest);
-        }
-        return 0;
-      }
+      return switch (gutFeeling) {
+        case STRONG -> confidentRaise(betRequest);
+        case MEDIUM -> mediumConfidentButBluffing(betRequest);
+        case WEAK -> lessConfidentButBluffing(betRequest);
+      };
 
-      return 0;
     } catch (Exception e) {
       log.error("Error", e);
       log.error("Error", e);
       log.error("Error", e);
       return 0;
     }
+  }
+
+  private static int lessConfidentButBluffing(BetRequest betRequest) {
+    Random random = new Random();
+    int i = random.nextInt(10);
+    if (i <= 3) {
+      return confidentRaise(betRequest);
+    }
+    return 0;
+  }
+
+  private static int mediumConfidentButBluffing(BetRequest betRequest) {
+    Random random = new Random();
+    int i = random.nextInt(10);
+    if (i <= 3) {
+      return confidentRaise(betRequest);
+    }
+    // check call
+    return betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet();
   }
 
   private static int confidentRaise(BetRequest betRequest) {

@@ -12,4 +12,7 @@ record BetRequest(List<PokerPlayer> players,
                   @JsonProperty("in_action") int inAction) {
 
 
+  static List<Card> getHoleCards(BetRequest betRequest) {
+    return betRequest.players().get(betRequest.inAction()).holeCards();
+  }
 }
