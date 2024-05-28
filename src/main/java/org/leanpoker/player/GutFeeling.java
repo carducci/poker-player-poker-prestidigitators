@@ -4,5 +4,5 @@ public enum GutFeeling {
 
   STRONG,
   MEDIUM,
-  WEAK
+    SUPERCONFIDENT, WEAK
 }

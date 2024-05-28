@@ -54,6 +54,9 @@ public class StartingSolver {
 
   public GutFeeling GetAction() {
     var score = calculateChenScore();
+    if (score > 12) {
+      return GutFeeling.SUPERCONFIDENT;
+    }
     if (score > 8) {
       return GutFeeling.STRONG;
     } else if (score > 4) {
