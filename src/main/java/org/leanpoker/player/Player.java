@@ -38,6 +38,7 @@ public class Player {
       var gutFeeling = solver.GetAction();
 
       return switch (gutFeeling) {
+        case SUPERCONFIDENT -> superConfidentRaise(betRequest);
         case STRONG -> confidentRaise(betRequest);
         case MEDIUM -> mediumConfidentButBluffing(betRequest);
         case WEAK -> lessConfidentButBluffing(betRequest);
@@ -47,6 +48,18 @@ public class Player {
       log.error("Error", e);
       return 0;
     }
+  }
+
+  private static int superConfidentRaise(BetRequest betRequest) {
+    int i = random.nextInt(10);
+    if(i < 7)
+      return betRequest.pot()*2;
+    //return all in
+    return allIn(betRequest);
+  }
+
+  private static int allIn(BetRequest betRequest) {
+      return betRequest.players().get(betRequest.inAction()).stack();
   }
 
   private static int confidentRaise(BetRequest betRequest) {

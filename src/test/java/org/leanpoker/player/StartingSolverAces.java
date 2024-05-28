@@ -16,7 +16,7 @@ class StartingSolverTest {
 
     GutFeeling gutFeeling = solver.GetAction();
 
-    assertEquals(GutFeeling.STRONG, gutFeeling);
+    assertEquals(GutFeeling.SUPERCONFIDENT, gutFeeling);
   }
 
 
