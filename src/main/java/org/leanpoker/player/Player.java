@@ -17,7 +17,7 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "2.4";
+  static final String VERSION = "2.5";
 
   private static Map<String, Boolean> bluffs = new HashMap<>();
   public static Random random = new Random();
@@ -45,10 +45,38 @@ public class Player {
 
     } catch (Exception e) {
       log.error("Error", e);
-      log.error("Error", e);
-      log.error("Error", e);
       return 0;
     }
+  }
+
+  private static int confidentRaise(BetRequest betRequest) {
+    return betRequest.pot() * 3 / 4;
+  }
+
+  private static int minRaise(BetRequest betRequest) {
+    return betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
+           + betRequest.minimumRaise();
+  }
+
+  private static int mediumConfidentButBluffing(BetRequest betRequest) {
+    if (bluffs.containsKey(betRequest.gameId())) {
+      if (doWeHaveToCallAnAllIn(betRequest)) {
+        return 0;
+      }
+      return betRequest.pot() / 2;
+    }
+    int i = random.nextInt(10);
+    if (i <= 3) {
+      bluffs.put(betRequest.gameId(), true);
+      log.info(">>> we bluff, game id: {}", betRequest.gameId());
+      return confidentRaise(betRequest);
+    }
+    // check call
+    return betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet();
+  }
+
+  private static boolean doWeHaveToCallAnAllIn(BetRequest betRequest) {
+    return betRequest.players().get(betRequest.inAction()).stack() == 0;
   }
 
   private static int lessConfidentButBluffing(BetRequest betRequest) {
@@ -62,34 +90,6 @@ public class Player {
       return confidentRaise(betRequest);
     }
     return 0;
-  }
-
-  private static int mediumConfidentButBluffing(BetRequest betRequest) {
-    if (bluffs.containsKey(betRequest.gameId())) {
-      return betRequest.pot() / 2;
-    }
-    int i = random.nextInt(10);
-    if (i <= 3) {
-      bluffs.put(betRequest.gameId(), true);
-      log.info(">>> we bluff, game id: {}", betRequest.gameId());
-      return confidentRaise(betRequest);
-    }
-    // check call
-    return betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet();
-  }
-
-  private static int confidentRaise(BetRequest betRequest) {
-
-    int i = random.nextInt(10);
-    if (i <= 3) {
-      return (betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
-              + betRequest.minimumRaise()) * 5;
-    } else if (i < 9) {
-      return (betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
-              + betRequest.minimumRaise()) * 4;
-    } else {
-      return betRequest.players().get(betRequest.inAction()).stack();
-    }
   }
 
   public static void showdown(JsonNode game) {
