@@ -5,6 +5,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import org.slf4j.Logger;
 
@@ -15,7 +17,9 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "2.2";
+  static final String VERSION = "2.3";
+
+  private static Map<String, Boolean> bluffs = new HashMap<>();
 
   public static int betRequest(JsonNode request) {
     try {
@@ -66,16 +70,20 @@ public class Player {
   }
 
   private static int confidentRaise(BetRequest betRequest) {
+    if (bluffs.containsKey(betRequest.gameId())) {
+      return betRequest.pot() / 2;
+    }
     Random random = new Random();
     int i = random.nextInt(10);
     if (i <= 3) {
+      bluffs.put(betRequest.gameId(), true);
       return (betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
               + betRequest.minimumRaise()) * 5;
     } else if (i < 9) {
       return (betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
               + betRequest.minimumRaise()) * 4;
     } else {
-      // go all in
+
       return betRequest.players().get(betRequest.inAction()).stack();
     }
   }

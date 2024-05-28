@@ -9,7 +9,8 @@ record BetRequest(List<PokerPlayer> players,
                   @JsonProperty("current_buy_in") int currentBuyIn,
                   @JsonProperty("pot") int pot,
                   @JsonProperty("minimum_raise") int minimumRaise,
-                  @JsonProperty("in_action") int inAction) {
+                  @JsonProperty("in_action") int inAction,
+                  @JsonProperty("game_id") String gameId) {
 
 
   static List<Card> getHoleCards(BetRequest betRequest) {
