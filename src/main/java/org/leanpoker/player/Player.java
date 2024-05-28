@@ -17,7 +17,7 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "3.4";
+  static final String VERSION = "3.5";
 
   private static Map<String, Boolean> bluffs = new HashMap<>();
   public static Random random = new Random();
@@ -92,7 +92,7 @@ public class Player {
     return betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet();
   }
   private static int confidentRaise(BetRequest betRequest) {
-    if(shouldWeCall(4)) {
+    if(shouldWeCall(3)) {
         return call(betRequest);
     }
     return betRequest.pot() * 3 / 4;
