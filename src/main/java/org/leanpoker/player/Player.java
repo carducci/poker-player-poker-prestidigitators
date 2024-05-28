@@ -22,6 +22,16 @@ public class Player {
   private static Map<String, Boolean> bluffs = new HashMap<>();
   public static Random random = new Random();
 
+  public static boolean shouldWeBluff(){
+    int i = random.nextInt(5);
+    return i <= 2;
+  }
+
+  private static boolean shouldWeCall(int probability) {
+    int i = random.nextInt(10);
+    return i < probability;
+  }
+
   public static int betRequest(JsonNode request) {
     try {
       log.info("betRequest: {}", request);
@@ -78,8 +88,13 @@ public class Player {
   private static int allIn(BetRequest betRequest) {
     return betRequest.players().get(betRequest.inAction()).stack();
   }
-
+  private static int call(BetRequest betRequest){
+    return betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet();
+  }
   private static int confidentRaise(BetRequest betRequest) {
+    if(shouldWeCall(4)) {
+        return call(betRequest);
+    }
     return betRequest.pot() * 3 / 4;
   }
 
@@ -90,19 +105,22 @@ public class Player {
 
   private static int mediumConfidentButBluffing(BetRequest betRequest) {
     if (bluffs.containsKey(betRequest.gameId())) {
-      if (doWeHaveToCallAnAllIn(betRequest)) {
+      if (doWeHaveToCallAnAllIn(betRequest) && !shouldWeCall(2)) {
         return 0;
       }
+      else if(doWeHaveToCallAnAllIn(betRequest)) {
+        return call(betRequest);
+      }
+
       return betRequest.pot() / 2;
     }
-    int i = random.nextInt(10);
-    if (i <= 3) {
+    if (shouldWeBluff()) {
       bluffs.put(betRequest.gameId(), true);
       log.info(">>> we bluff, game id: {}", betRequest.gameId());
       return confidentRaise(betRequest);
     }
     // check call
-    return betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet();
+    return call(betRequest);
   }
 
   private static boolean doWeHaveToCallAnAllIn(BetRequest betRequest) {
@@ -113,8 +131,7 @@ public class Player {
     if (bluffs.containsKey(betRequest.gameId())) {
       return betRequest.pot() / 2;
     }
-    int i = random.nextInt(10);
-    if (i <= 3) {
+    if (shouldWeBluff()) {
       bluffs.put(betRequest.gameId(), true);
       log.info(">>> we bluff, game id: {}", betRequest.gameId());
       return confidentRaise(betRequest);
