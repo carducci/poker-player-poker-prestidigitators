@@ -17,9 +17,10 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "2.3";
+  static final String VERSION = "2.4";
 
   private static Map<String, Boolean> bluffs = new HashMap<>();
+  public static Random random = new Random();
 
   public static int betRequest(JsonNode request) {
     try {
@@ -51,18 +52,26 @@ public class Player {
   }
 
   private static int lessConfidentButBluffing(BetRequest betRequest) {
-    Random random = new Random();
+    if (bluffs.containsKey(betRequest.gameId())) {
+      return betRequest.pot() / 2;
+    }
     int i = random.nextInt(10);
     if (i <= 3) {
+      bluffs.put(betRequest.gameId(), true);
+      log.info(">>> we bluff, game id: {}", betRequest.gameId());
       return confidentRaise(betRequest);
     }
     return 0;
   }
 
   private static int mediumConfidentButBluffing(BetRequest betRequest) {
-    Random random = new Random();
+    if (bluffs.containsKey(betRequest.gameId())) {
+      return betRequest.pot() / 2;
+    }
     int i = random.nextInt(10);
     if (i <= 3) {
+      bluffs.put(betRequest.gameId(), true);
+      log.info(">>> we bluff, game id: {}", betRequest.gameId());
       return confidentRaise(betRequest);
     }
     // check call
@@ -70,21 +79,15 @@ public class Player {
   }
 
   private static int confidentRaise(BetRequest betRequest) {
-    if (bluffs.containsKey(betRequest.gameId())) {
-      return betRequest.pot() / 2;
-    }
-    Random random = new Random();
+
     int i = random.nextInt(10);
     if (i <= 3) {
-      bluffs.put(betRequest.gameId(), true);
-      log.info(">>> we bluff, game id: {}", betRequest.gameId());
       return (betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
               + betRequest.minimumRaise()) * 5;
     } else if (i < 9) {
       return (betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet()
               + betRequest.minimumRaise()) * 4;
     } else {
-
       return betRequest.players().get(betRequest.inAction()).stack();
     }
   }
