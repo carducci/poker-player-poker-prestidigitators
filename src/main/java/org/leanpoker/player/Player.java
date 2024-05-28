@@ -24,7 +24,7 @@ public class Player {
 
   public static boolean shouldWeBluff(){
     int i = random.nextInt(5);
-    return i < 1;
+    return i <= 1;
   }
 
   private static boolean shouldWeCall(int probability) {
@@ -37,6 +37,15 @@ public class Player {
       log.info("betRequest: {}", request);
       JsonNode jsonNode = OBJECT_MAPPER.readTree(request.toString());
       BetRequest betRequest = OBJECT_MAPPER.treeToValue(jsonNode, BetRequest.class);
+
+      var card1 = betRequest.getHoleCards().get(0);
+      var card2 = betRequest.getHoleCards().get(1);
+      var startingHand = new StartingHand(card1, card2);
+
+      StartingSolver solver = new StartingSolver(startingHand, 1);
+
+      log.info("betRequest: {}", betRequest);
+      var gutFeeling = solver.GetAction();
 
       if (betRequest.isPostFlop()) {
         if (betRequest.currentBuyIn() > betRequest.bigBlind() &&
@@ -54,20 +63,19 @@ public class Player {
         }
         if(shouldWeCall(6))
           return betRequest.currentBuyIn() - betRequest.players().get(betRequest.inAction()).bet();
+
         if(shouldWeCall(4)){
           return 0;
         }
-        return betRequest.pot() / 4;
+
+        return switch (gutFeeling) {
+          case SUPERCONFIDENT -> superConfidentRaise(betRequest);
+          case STRONG -> confidentRaise(betRequest);
+          case MEDIUM -> mediumConfidentButBluffing(betRequest);
+          case WEAK -> 0;
+        };
+
       }
-
-      var card1 = betRequest.getHoleCards().get(0);
-      var card2 = betRequest.getHoleCards().get(1);
-      var startingHand = new StartingHand(card1, card2);
-
-      StartingSolver solver = new StartingSolver(startingHand, 1);
-
-      log.info("betRequest: {}", betRequest);
-      var gutFeeling = solver.GetAction();
 
       return switch (gutFeeling) {
         case SUPERCONFIDENT -> superConfidentRaise(betRequest);
