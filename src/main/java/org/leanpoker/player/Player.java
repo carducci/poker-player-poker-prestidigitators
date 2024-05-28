@@ -51,6 +51,9 @@ public class Player {
         if (random.nextInt(4) == 0) {
           return betRequest.pot();
         }
+        if(doWeHaveToCallAnAllIn(betRequest)){
+          return 0;
+        }
         return betRequest.pot() / 4;
       }
 
