@@ -17,14 +17,21 @@ class HandEvaluator {
 
     var tripleCount = 0;
     var pairCount = 0;
-    for(var entry : rankCount.entrySet()) {
-      if(entry.getValue() == 2) {
+    for (var entry : rankCount.entrySet()) {
+      if (entry.getValue() == 2) {
         pairCount++;
       }
-      if(entry.getValue() == 3) {
+      if (entry.getValue() == 3) {
         tripleCount++;
       }
     }
-    return pairCount >= 2 || tripleCount >= 1;
+
+
+    var suitCount = list.stream()
+        .map(Card::suit)
+        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+    return pairCount >= 2 || tripleCount >= 1 || suitCount.values().stream()
+        .anyMatch(count -> count >= 5);
   }
 }

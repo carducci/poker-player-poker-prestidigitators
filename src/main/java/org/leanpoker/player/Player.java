@@ -17,7 +17,7 @@ public class Player {
 
   private static final Logger log = getLogger(Player.class);
 
-  static final String VERSION = "3.1";
+  static final String VERSION = "3.2";
 
   private static Map<String, Boolean> bluffs = new HashMap<>();
   public static Random random = new Random();
