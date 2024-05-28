@@ -15,7 +15,7 @@ public class Player {
 
     private static final Logger log = getLogger(Player.class);
 
-    static final String VERSION = "1.7";
+    static final String VERSION = "1.8";
 
     public static int betRequest(JsonNode request) {
         try {
@@ -23,8 +23,14 @@ public class Player {
             JsonNode jsonNode = OBJECT_MAPPER.readTree(request.toString());
             BetRequest betRequest = OBJECT_MAPPER.treeToValue(jsonNode, BetRequest.class);
 
+            var card1 = betRequest.players().get(betRequest.inAction()).holeCards().get(0);
+            var card2 = betRequest.players().get(betRequest.inAction()).holeCards().get(1);
+            var startingHand = new StartingHand(card1, card2);
+
+            StartingSolver solver = new StartingSolver(startingHand, 1);
+
             log.info("betRequest: {}", betRequest);
-            return 1000;
+            return solver.GetAction();
         } catch (Exception e) {
             log.error("Error", e);
             log.error("Error", e);
